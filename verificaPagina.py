@@ -11,6 +11,7 @@ from datetime import datetime  # Biblioteca para manipular datas e horas
 # Carregar variáveis de ambiente do arquivo .env
 load_dotenv()
 
+
 # URL da página web que será monitorada para novos arquivos PDF
 url = 'https://ibfc.selecao.net.br/informacoes/466/'
 
@@ -75,6 +76,7 @@ def load_existing_links():
     return existing_links
 
 def save_new_links(new_links):
+
     """
     Salva os novos links de PDFs no arquivo de armazenamento.
     Args:
@@ -83,11 +85,12 @@ def save_new_links(new_links):
     with open(pdf_storage_file, 'a') as file:
         for link in new_links:
             file.write(link + '\n')  # Escreve cada novo link em uma nova linha
-
-def check_for_new_pdfs():
+cont = 0
+def check_for_new_pdfs():               
     """
     Verifica a página em busca de novos arquivos PDF e envia notificações em caso positivo.
     """
+    global cont 
     existing_links = load_existing_links()  # Carrega os links já conhecidos
     current_links = get_pdf_links()  # Obtém os links atuais da página
     new_links = [link for link in current_links if link not in existing_links]  # Encontra novos links
@@ -96,11 +99,19 @@ def check_for_new_pdfs():
     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     if new_links:
-        print(f'[{current_time}] Novos arquivos PDF encontrados: {new_links}')
+        print(f'[{current_time}] Novos arquivos PDF encontrados:) {new_links}')
         save_new_links(new_links)  # Salva os novos links encontrados
         send_email(new_links)  # Envia notificação por email
     else:
-        print(f'[{current_time}] Nenhum novo arquivo PDF encontrado :(')
+        cont+=1
+
+        if cont == 10:
+            print(f'[{current_time}] Ufa! Cansei de trabalhar, ajuda nós ai IBFC :(')
+            cont = 0
+        else:
+            print(f'[{current_time}] Nenhum novo arquivo PDF encontrado :(')
+
+        
 
 if __name__ == '__main__':
     while True:
