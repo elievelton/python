@@ -12,7 +12,7 @@ import os
 load_dotenv()
 
 # URL do feed RSS que será monitorado
-FEED_URL = "https://concursosnobrasil.com/feed/"
+FEED_URL = "https://concursosnobrasil.com/concursos/feed"
 # Intervalo de verificação em segundos (600 segundos = 10 minutos)
 CHECK_INTERVAL = 600
 # Nome do banco de dados SQLite
