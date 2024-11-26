@@ -7,6 +7,10 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime  # Biblioteca para manipular datas e horas
+from plyer import notification
+
+
+
 
 # Carregar variáveis de ambiente do arquivo .env
 load_dotenv()
@@ -30,24 +34,26 @@ def send_email(new_links):
     subject = 'Novos Arquivos PDF Encontrados ;)'
     body = f'Novos arquivos PDF encontrados: {", ".join(new_links)}'
     
-    # Configura o email com assunto e corpo
     msg = MIMEMultipart()
     msg['From'] = email_user
-    msg['To'] = email_send
+    
+    # Lê os destinatários do arquivo .env e os converte em uma lista
+    email_recipients = os.getenv('EMAIL_RECIPIENTS').split(',')
+    msg['To'] = ", ".join(email_recipients)
     msg['Subject'] = subject
     msg.attach(MIMEText(body, 'plain'))
     
     try:
-        # Conecta ao servidor SMTP do Gmail e envia o email
         server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()  # Usa TLS para segurança
-        server.login(email_user, email_password)  # Faz login com as credenciais fornecidas
+        server.starttls()
+        server.login(email_user, email_password)
         text = msg.as_string()
-        server.sendmail(email_user, email_send, text)  # Envia o email
-        server.quit()  # Encerra a conexão com o servidor SMTP
+        server.sendmail(email_user, email_recipients, text)
+        server.quit()
         print('Email enviado com sucesso.')
     except Exception as e:
-        print(f'Erro ao enviar email: {e}')  # Exibe mensagem de erro em caso de falha
+        print(f'Erro ao enviar email: {e}')
+
 
 def get_pdf_links():
     """
@@ -86,32 +92,39 @@ def save_new_links(new_links):
         for link in new_links:
             file.write(link + '\n')  # Escreve cada novo link em uma nova linha
 cont = 0
-def check_for_new_pdfs():               
-    """
-    Verifica a página em busca de novos arquivos PDF e envia notificações em caso positivo.
-    """
+def check_for_new_pdfs():
     global cont 
-    existing_links = load_existing_links()  # Carrega os links já conhecidos
-    current_links = get_pdf_links()  # Obtém os links atuais da página
-    new_links = [link for link in current_links if link not in existing_links]  # Encontra novos links
-
-    # Obtém a hora atual
+    existing_links = load_existing_links()
+    current_links = get_pdf_links()
+    new_links = [link for link in current_links if link not in existing_links]
     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     if new_links:
         print(f'[{current_time}] Novos arquivos PDF encontrados:) {new_links}')
-        save_new_links(new_links)  # Salva os novos links encontrados
-        send_email(new_links)  # Envia notificação por email
+        save_new_links(new_links)
+        send_email(new_links)  # Envia email para os destinatários definidos no arquivo .env
+        send_windows_notification(new_links)  # Envia notificação no Windows
     else:
-        cont+=1
-
+        cont += 1
         if cont == 10:
             print(f'[{current_time}] Ufa! Cansei de trabalhar, ajuda nós ai IBFC :(')
             cont = 0
         else:
             print(f'[{current_time}] Nenhum novo arquivo PDF encontrado :(')
 
-        
+
+def send_windows_notification(new_links):
+    """
+    Envia uma notificação no Windows com os novos links de PDF encontrados.
+    """
+    title = 'Novos Arquivos PDF Encontrados'
+    message = f'Novos arquivos PDF: {", ".join(new_links)}'
+    notification.notify(
+        title=title,
+        message=message,
+        timeout=10  # Notificação será exibida por 10 segundos
+    )
+ 
 
 if __name__ == '__main__':
     while True:
