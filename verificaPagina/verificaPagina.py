@@ -25,7 +25,7 @@ pdf_storage_file = 'pdf_links.txt'
 # Configurações de email para enviar notificações
 email_user = os.getenv('EMAIL_USER')
 email_password = os.getenv('EMAIL_PASSWORD')
-email_send = os.getenv('EMAIL_SEND')
+email_recipients = os.getenv('EMAIL_RECIPIENTS').split(',')
 
 def send_email(new_links):
     """
