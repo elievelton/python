@@ -103,7 +103,7 @@ def check_for_new_pdfs():
         print(f'[{current_time}] Novos arquivos PDF encontrados:) {new_links}')
         save_new_links(new_links)
         send_email(new_links)  # Envia email para os destinatários definidos no arquivo .env
-        send_windows_notification(new_links)  # Envia notificação no Windows
+        #send_windows_notification(new_links)  # Envia notificação no Windows
     else:
         cont += 1
         if cont == 10:
@@ -112,7 +112,7 @@ def check_for_new_pdfs():
         else:
             print(f'[{current_time}] Nenhum novo arquivo PDF encontrado :(')
 
-
+'''
 def send_windows_notification(new_links):
     """
     Envia uma notificação no Windows com os novos links de PDF encontrados.
@@ -124,7 +124,7 @@ def send_windows_notification(new_links):
         message=message,
         timeout=10  # Notificação será exibida por 10 segundos
     )
- 
+ '''
 
 if __name__ == '__main__':
     while True:
