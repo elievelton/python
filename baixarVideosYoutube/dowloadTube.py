@@ -4,7 +4,7 @@ from yt_dlp import YoutubeDL
 def baixar_video(url, nome_arquivo, apenas_audio=False):
     caminho_diretorio = "/home/kali/Videos"
     
-    # Define o formato do nome do arquivo com base na entrada do usuário
+    # Defineeee o formato do nome do arquivo com base na entrada do usuário
     ydl_opts = {
         'outtmpl': f'{caminho_diretorio}/{nome_arquivo}.%(ext)s',
     }
