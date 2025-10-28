@@ -7,7 +7,7 @@ console = Console()
 # Tela de carregamento estilo "encanto"
 with Progress(
     SpinnerColumn(),
-    TextColumn("[bold magenta]Invocando magia da velocidade...[/bold magenta]"),
+    TextColumn("[bold magenta]Invocando a magia da velocidade...[/bold magenta]"),
     transient=True,
 ) as progress:
     progress.add_task(description="Carregando...", total=None)
